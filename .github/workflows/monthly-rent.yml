@@ -1,0 +1,41 @@
+name: Monthly Rent Auto-Generation
+
+on:
+  schedule:
+    # Runs at 00:00 UTC on the 1st of every month
+    - cron: '0 0 1 * *'
+  # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  generate-rent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger rent generation
+        run: |
+          echo "Triggering rent generation at $(date)"
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X GET \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.APP_URL }}/api/cron/generate-rent")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Response: $BODY"
+          echo "HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Cron job failed with status $HTTP_CODE"
+            exit 1
+          fi
+          
+          echo "✅ Rent generation completed successfully"
+
+      - name: Log result
+        if: always()
+        run: echo "Cron job finished at $(date)"

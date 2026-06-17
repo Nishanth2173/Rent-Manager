@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  phone     String?
+  avatar    String?
+  role      Role     @default(LANDLORD)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenants    Tenant[]
+  auditLogs  AuditLog[]
+
+  @@index([email])
+}
+
+model Tenant {
+  id            String       @id @default(cuid())
+  name          String
+  mobile        String
+  propertyNo    String
+  monthlyRent   Decimal      @db.Decimal(10, 2)
+  rentDueDay    Int          // 1-31
+  joiningDate   DateTime
+  status        TenantStatus @default(ACTIVE)
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  rentRecords   RentRecord[]
+  auditLogs     AuditLog[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([propertyNo])
+}
+
+model RentRecord {
+  id          String        @id @default(cuid())
+  rentMonth   DateTime      // First day of the month
+  dueDate     DateTime
+  amount      Decimal       @db.Decimal(10, 2)
+  status      RentStatus    @default(PENDING)
+  paidAt      DateTime?
+  paidAmount  Decimal?      @db.Decimal(10, 2)
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  tenantId    String
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  payments    Payment[]
+
+  @@unique([tenantId, rentMonth])
+  @@index([tenantId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model Payment {
+  id           String     @id @default(cuid())
+  amount       Decimal    @db.Decimal(10, 2)
+  paymentDate  DateTime   @default(now())
+  method       String     @default("CASH")
+  reference    String?
+  notes        String?
+  createdAt    DateTime   @default(now())
+
+  rentRecordId String
+  rentRecord   RentRecord @relation(fields: [rentRecordId], references: [id], onDelete: Cascade)
+
+  @@index([rentRecordId])
+  @@index([paymentDate])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  oldData   Json?
+  newData   Json?
+  createdAt DateTime @default(now())
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entity, entityId])
+}
+
+enum Role {
+  ADMIN
+  LANDLORD
+}
+
+enum TenantStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
