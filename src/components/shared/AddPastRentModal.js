@@ -31,9 +31,8 @@ export default function AddPastRentModal({ tenant, onClose, onSuccess }) {
   const currentMonth = now.getMonth(); // 0-indexed
 
   // Each row = { year, month, amount, id }
-  const [nextId, setNextId] = useState(1);
   const [rows, setRows] = useState([
-    { id: 0, year: currentYear, month: currentMonth === 0 ? 11 : currentMonth - 1, amount: Number(tenant.monthlyRent) },
+    { id: Date.now(), year: currentYear, month: currentMonth === 0 ? 11 : currentMonth - 1, amount: Number(tenant.monthlyRent) },
   ]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
@@ -41,10 +40,9 @@ export default function AddPastRentModal({ tenant, onClose, onSuccess }) {
   // Quick-fill: last N months
   const quickFill = (n) => {
     const months = buildLastNMonths(n);
-    setNextId(n);
     setRows(
       months.map((m, i) => ({
-        id: i,
+        id: Date.now() + i,
         year: m.year,
         month: m.month,
         amount: Number(tenant.monthlyRent),
@@ -62,8 +60,7 @@ export default function AddPastRentModal({ tenant, onClose, onSuccess }) {
     let newYear = earliest.year;
     if (newMonth < 0) { newMonth = 11; newYear--; }
 
-    setRows([...rows, { id: nextId, year: newYear, month: newMonth, amount: Number(tenant.monthlyRent) }]);
-    setNextId(nextId + 1);
+    setRows([...rows, { id: Date.now(), year: newYear, month: newMonth, amount: Number(tenant.monthlyRent) }]);
   };
 
   const removeRow = (id) => setRows(rows.filter((r) => r.id !== id));

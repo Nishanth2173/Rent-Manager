@@ -127,12 +127,12 @@ export default function SettingsClient({ user }) {
         </div>
         <div className="space-y-3 text-sm">
           {[
-            { id: 'version', label: 'App Version', value: 'v1.0.0' },
-            { id: 'stack', label: 'Stack', value: 'Next.js 15 + Prisma + PostgreSQL' },
-            { id: 'rent-gen', label: 'Rent Auto-Generation', value: 'Enabled on page load' },
-            { id: 'overdue', label: 'Overdue Detection', value: 'Automatic (daily)' },
+            { label: 'App Version', value: 'v1.0.0' },
+            { label: 'Stack', value: 'Next.js 15 + Prisma + PostgreSQL' },
+            { label: 'Rent Auto-Generation', value: 'Enabled on page load' },
+            { label: 'Overdue Detection', value: 'Automatic (daily)' },
           ].map((item) => (
-            <div key={item.id} className="flex items-center justify-between py-2 border-b border-surface-border last:border-0">
+            <div key={item.label} className="flex items-center justify-between py-2 border-b border-surface-border last:border-0">
               <span className="text-slate-400">{item.label}</span>
               <span className="text-slate-200 font-medium text-xs">{item.value}</span>
             </div>

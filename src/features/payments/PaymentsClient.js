@@ -9,6 +9,8 @@ import { formatCurrency, formatDate, formatMonthYear } from '../../utils/helpers
 import StatusBadge from '../../components/ui/StatusBadge';
 import PayRentModal from '../../components/shared/PayRentModal';
 
+const STATUSES = ['', 'PENDING', 'PAID', 'OVERDUE'];
+
 export default function PaymentsClient({ initialData }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -47,23 +49,17 @@ export default function PaymentsClient({ initialData }) {
           <p className="text-sm text-slate-400 mt-0.5">{total} total records</p>
         </div>
         <div className="flex gap-2 sm:ml-auto flex-wrap">
-          {[
-            { value: '', label: 'All' },
-            { value: 'PENDING', label: 'PENDING' },
-            { value: 'PAID', label: 'PAID' },
-            { value: 'OVERDUE', label: 'OVERDUE' },
-          ].map(({ value, label }) => (
+          {STATUSES.map((s) => (
             <button
-              key={`status-${value || 'all'}`}
-              onClick={() => handleStatusFilter(value)}
+              key={s}
+              onClick={() => handleStatusFilter(s)}
               className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
-                statusFilter === value
+                statusFilter === s
                   ? 'bg-brand-600/20 border-brand-500/40 text-brand-300'
                   : 'bg-surface-elevated border-surface-border text-slate-400 hover:text-white'
               }`}
-              suppressHydrationWarning
             >
-              {label}
+              {s || 'All'}
             </button>
           ))}
         </div>

@@ -89,22 +89,17 @@ export default function TenantsClient({ initialData }) {
           />
         </div>
         <div className="flex gap-2">
-          {[
-            { value: '', label: 'All' },
-            { value: 'ACTIVE', label: 'ACTIVE' },
-            { value: 'INACTIVE', label: 'INACTIVE' },
-          ].map(({ value, label }) => (
+          {['', 'ACTIVE', 'INACTIVE'].map((s) => (
             <button
-              key={`status-${value || 'all'}`}
-              onClick={() => handleStatusFilter(value)}
+              key={s}
+              onClick={() => handleStatusFilter(s)}
               className={`px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                statusFilter === value
+                statusFilter === s
                   ? 'bg-brand-600/20 border-brand-500/40 text-brand-300'
                   : 'bg-surface-elevated border-surface-border text-slate-400 hover:text-white'
               }`}
-              suppressHydrationWarning
             >
-              {label}
+              {s || 'All'}
             </button>
           ))}
         </div>

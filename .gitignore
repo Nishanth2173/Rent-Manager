@@ -3,42 +3,29 @@ node_modules/
 .pnp
 .pnp.js
 
-# Production builds
+# Next.js
 .next/
 out/
 build/
-dist/
-coverage/
 
-# Environment files
+# Env
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.*.local
 
-# Logs
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-*.log
 
 # Prisma
 prisma/migrations/
-*.sqlite
-*.db
 
-# Vercel / deployment
+# Vercel
 .vercel
 
-# IDE / editor settings
-.vscode/
-.idea/
-
-# OS files
+# OS
 .DS_Store
 Thumbs.db
-*.swp
-
