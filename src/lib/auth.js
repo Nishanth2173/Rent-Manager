@@ -12,23 +12,42 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            console.error('[auth] Missing email or password in request');
+            return null;
+          }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+          const email = credentials.email.trim().toLowerCase();
 
-        if (!user) return null;
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) return null;
+          if (!user) {
+            console.error('[auth] No user found for email:', email);
+            return null;
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+
+          if (!isValid) {
+            console.error('[auth] Password mismatch for email:', email);
+            return null;
+          }
+
+          console.log('[auth] Login successful for:', email);
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error('[auth] authorize() threw an error:', error);
+          return null;
+        }
       },
     }),
   ],
@@ -56,6 +75,7 @@ export const authOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: true, // Temporary — shows detailed NextAuth logs in Vercel
 };
 
 export default NextAuth(authOptions);
