@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -11,7 +11,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({ email: 'landlord@demo.com', password: 'password123' });
+  const [form, setForm] = useState({ email: '', password: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +41,6 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-900/20 rounded-full blur-3xl" />
       </div>
 
-      {/* Grid pattern */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -67,7 +66,7 @@ export default function LoginPage() {
           >
             <Building2 className="w-8 h-8 text-white" />
           </motion.div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">
+          <h1 className="text-3xl font-display font-bold text-white">
             Rent<span className="gradient-text">Flow</span>
           </h1>
           <p className="text-slate-400 text-sm">Property management made simple</p>
@@ -124,18 +123,17 @@ export default function LoginPage() {
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <>
-                  Sign in <ArrowRight className="w-4 h-4" />
-                </>
+                <>Sign in <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
           </form>
 
-          {/* Demo credentials hint */}
-          <div className="mt-6 p-4 bg-brand-600/10 border border-brand-500/20 rounded-xl">
-            <p className="text-xs text-brand-300 font-medium mb-1">Demo credentials</p>
-            <p className="text-xs text-slate-400 font-mono">landlord@demo.com / password123</p>
-          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">
+            First time here?{' '}
+            <a href="/setup" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+              Create your account →
+            </a>
+          </p>
         </div>
       </motion.div>
     </div>

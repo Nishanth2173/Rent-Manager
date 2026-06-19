@@ -1,13 +1,20 @@
 import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
 
-export default withAuth({
-  pages: {
-    signIn: '/login',
+export default withAuth(
+  function middleware(req) {
+    return NextResponse.next();
   },
-});
+  {
+    pages: {
+      signIn: '/login',
+    },
+  }
+);
 
 export const config = {
-  // Protect these routes — /setup and /login are intentionally excluded
+  // Only protect these routes
+  // /setup, /login, /api are intentionally NOT here
   matcher: [
     '/dashboard/:path*',
     '/tenants/:path*',
